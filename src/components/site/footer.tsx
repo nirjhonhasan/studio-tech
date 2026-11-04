@@ -132,7 +132,7 @@ export function Footer() {
       {/* Copyright bar */}
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
-          <p>© {new Date().getFullYear()} StudioSpace. All rights reserved.</p>
+          <p>© 2026 StudioSpace. All rights reserved.</p>
           <p className="flex gap-4">
             <Link href="/" className="hover:text-foreground">
               Terms of Service

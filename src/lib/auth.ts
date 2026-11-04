@@ -11,17 +11,10 @@ export const auth = betterAuth({
     enabled: true, 
   }, 
 
-  // Google sign-in activates automatically once you add GOOGLE_CLIENT_ID and
-  // GOOGLE_CLIENT_SECRET to .env.local (Google Cloud Console → OAuth client,
-  // redirect URI: {BETTER_AUTH_URL}/api/auth/callback/google).
-  socialProviders: {
-    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-      ? {
-          google: {
-            clientId: process.env.GOOGLE_CLIENT_ID as string,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-          },
-        }
-      : {}),
-  },
+   socialProviders: {
+        google: { 
+            clientId: process.env.GOOGLE_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+        }, 
+    },
 });
