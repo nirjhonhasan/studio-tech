@@ -8,7 +8,6 @@ import { Logo } from "@/components/site/logo";
 import { UserMenu } from "@/components/site/user-menu";
 import { useAuthUser } from "@/lib/auth-client";
 import { cn } from "cn";
-import Image from "next/image";
 
 const NAV_LINKS = [
   { href: "/", label: "Home", icon: House },
@@ -25,7 +24,6 @@ export function Navbar() {
   const pathname = usePathname(); // current route, used for the active indicator
   const [mobileOpen, setMobileOpen] = useState(false);
 
-
   // Session comes from BetterAuth (src/lib/auth-client.ts).
   const { user, isPending } = useAuthUser();
   const isLoggedIn = Boolean(user);
@@ -38,19 +36,11 @@ export function Navbar() {
     { href: "/my-bookings", label: "My Bookings", icon: CalendarCheck },
   ];
 
-
-  
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-8">
-          <div>
-            <Image src="/dark-theme-logo.png"
-            alt="Logo"
-            width={50}
-            height={30}
-            />
-          </div>
+          <Logo />
 
           {/* Desktop links */}
           <nav className="hidden items-center gap-1 md:flex">

@@ -3,19 +3,16 @@ import Image from "next/image";
 import { Star, MapPin, Users } from "lucide-react";
 import type { Studio } from "@/types/studio";
 
-/**
- * Featured studio card used on the home page grid.
- * Card shows: image, category badge, title, hourly rate, rating badge,
- * location and a "View Details" button — exactly as the spec requires.
- * Uses fixed media height + h-full flex so all cards end up equal height.
- */
+
 export function StudioCard({ studio }: { studio: Studio }) {
+
+  
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
       {/* Cover image — fixed height keeps every card's media area identical */}
       <div className="relative h-52 w-full overflow-hidden">
         <Image
-          src={studio.image}
+          src={studio.imageUrl}
           alt={studio.title}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -54,7 +51,7 @@ export function StudioCard({ studio }: { studio: Studio }) {
             <span className="text-sm text-muted-foreground"> / hr</span>
           </p>
           <Link
-            href={`/studios/${studio.id}`}
+            href={`/studios/${studio._id}`}
             className="inline-flex h-9 items-center rounded-full border border-primary/40 bg-primary/10 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
           >
             View Details

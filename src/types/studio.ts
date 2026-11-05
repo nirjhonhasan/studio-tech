@@ -12,20 +12,18 @@ export const STUDIO_CATEGORIES = [
 
 export type StudioCategory = (typeof STUDIO_CATEGORIES)[number];
 
-/**
- * A studio as stored in MongoDB and returned by /api/studios.
- * `image` is the normalized cover image URL (local /images path or remote URL).
- */
+
 export interface Studio {
-  id: string;
+  _id: string;
   title: string;
   category: StudioCategory;
-  image: string;
+  imageUrl: string;
   hourlyRate: number;
   securityDeposit?: number;
   maxCapacity: number;
   amenities: string[];
   overview?: string;
+  ownerName: string;
   /** 0 means "no reviews yet" — cards show a "New" badge instead. */
   rating: number;
   location: string;

@@ -1,85 +1,110 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { SearchX, CirclePlus } from "lucide-react";
+"use client";
+
 import { StudioCard } from "@/components/home/studio-card";
-import { SectionHeading } from "@/components/home/section-heading";
-import { listStudios } from "@/lib/studios";
-import { categoryFromSlug } from "@/lib/studio-categories";
-
-export const metadata: Metadata = {
-  title: "Explore Studios — StudioSpace",
-};
+import { Studio } from "@/types/studio";
+import { useState, useEffect } from "react";
 
 
-// Explore Studios page — grid of every listed workspace.
-// Reads ?category=<slug> (set by the home page category cards) and filters.
-export default async function ExploreStudiosPage({ searchParams }: PageProps<"/studios">) {
-  const params = await searchParams;
-  const slug = typeof params.category === "string" ? params.category : undefined;
-  const category = slug ? categoryFromSlug(slug) : undefined;
+const AllStudiosPage = () => {
 
-  const studios = await listStudios({ category, limit: 24 });
+  const [studios, setStudios] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+
+        const studioRes = await fetch("http://localhost:5000/studios");
+        const studioData = await studioRes.json();
+        setStudios(studioData);
+
+        const catRes = await fetch("http://localhost:5000/categories");
+        const catData = await catRes.json();
+        setCategories(catData);
+
+
+      } catch (error) {
+        console.error("Data fetch failed:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+
+  const filteredStudios = selectedCategory === "All"
+    ? studios
+    : studios.filter((studio: Studio) => studio.category === selectedCategory);
+
+  if (loading) {
+    return <div className="text-center py-20 text-[#a8a29e]">Loading studios...</div>;
+  }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-      <SectionHeading
-        eyebrow="Find your space"
-        title={category ? `${category}s` : "Explore Studios"}
-        description={
-          category
-            ? `Every listed ${category.toLowerCase()} on StudioSpace, newest first.`
-            : "Every creative workspace on StudioSpace — filter by category to narrow the hunt."
-        }
-      />
+    <div className="w-full bg-[#121110] px-4 py-12 text-[#f3f0ea]">
 
-      {/* Active filter chip with a way to clear it */}
-      {category && (
-        <div className="mt-6 flex justify-center">
-          <Link
-            href="/studios"
-            className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold tracking-tight text-[#f3f0ea] sm:text-4xl">
+          Explore All Studios
+        </h1>
+        <p className="mt-2 text-sm text-[#a8a29e]">
+          Discover and book professional creative spaces tailored for your next big project.
+        </p>
+      </div>
+
+      <div className="mx-auto max-w-7xl">
+
+
+        <div className="mb-10 flex flex-wrap items-center justify-start gap-3">
+
+
+          <button
+            onClick={() => setSelectedCategory("All")}
+            className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${selectedCategory === "All"
+              ? "bg-[#f59e0b] text-[#121110]"
+              : "border border-[#262422] bg-[#1a1816] text-[#a8a29e] hover:text-white"
+              }`}
           >
-            Filtering by {category} · clear ✕
-          </Link>
-        </div>
-      )}
+            All
+          </button>
 
-      {studios.length > 0 ? (
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {studios.map((studio) => (
-            <StudioCard key={studio.id} studio={studio} />
+
+
+          {categories.map((category: string) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`rounded-full px-5 py-2 text-sm font-medium transition-all ${selectedCategory === category
+                ? "bg-[#f59e0b] text-[#121110]"
+                : "border border-[#262422] bg-[#1a1816] text-[#a8a29e] hover:text-white"
+                }`}
+            >
+              {category}
+            </button>
           ))}
         </div>
-      ) : (
-        /* Friendly empty state with CTAs (required by the spec) */
-        <div className="mx-auto mt-16 flex max-w-md flex-col items-center rounded-2xl border border-border bg-card px-8 py-14 text-center">
-          <span className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-            <SearchX className="size-8" />
-          </span>
-          <h2 className="mt-5 text-lg font-semibold">No studios here yet</h2>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {category
-              ? `Nobody has listed a ${category.toLowerCase()} so far — you could be the first.`
-              : "No studios have been listed yet. Be the first host on StudioSpace!"}
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/add-studio"
-              className="inline-flex h-10 items-center gap-2 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/85"
-            >
-              <CirclePlus className="size-4" /> Add Your Studio
-            </Link>
-            {category && (
-              <Link
-                href="/studios"
-                className="inline-flex h-10 items-center rounded-full border border-border px-5 text-sm font-medium transition-colors hover:bg-muted"
-              >
-                Browse all studios
-              </Link>
-            )}
+
+
+
+        {filteredStudios.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredStudios.map((studio: Studio) => (
+              <StudioCard key={studio._id} studio={studio} />
+            ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div className="text-center py-20 text-[#a8a29e]">
+            There is no avaiale studio yet !
+          </div>
+        )}
+
+      </div>
     </div>
   );
-}
+};
+
+export default AllStudiosPage;

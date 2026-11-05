@@ -1,11 +1,18 @@
 "use client";
 
 import { createAuthClient } from "better-auth/react";
+import { jwtClient } from "better-auth/client/plugins";
 
-// One shared client for the whole app (same-origin, so cookies just work).
-export const authClient = createAuthClient();
+
+export const authClient = createAuthClient({
+  plugins: [
+    jwtClient()
+  ],
+  
+});
 
 export const { signIn, signUp, useSession } = authClient;
+
 
 export interface AuthUser {
   id: string;

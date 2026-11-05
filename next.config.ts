@@ -11,7 +11,10 @@ const nextConfig: NextConfig = {
   // Studio images come from external hosts (imgbb, postimage, unsplash…),
   // so allow optimized loading from any https source.
   images: {
-    remotePatterns: [{ protocol: "https", hostname: "**" }],
+    remotePatterns: [{ 
+      protocol: "https",
+       hostname: "**" 
+      }],
   },
   turbopack: {
     rules: {
