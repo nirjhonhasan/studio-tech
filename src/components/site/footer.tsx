@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Logo } from "@/components/site/logo";
 import { XLogoIcon, InstagramIcon, YoutubeIcon, FacebookIcon } from "@/components/site/social-icons";
+import Image from "next/image";
 
 const QUICK_LINKS = [
   { href: "/", label: "Home" },
@@ -48,7 +49,11 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.4fr]">
         {/* Brand + mission + socials */}
         <div>
-          <Logo />
+          <Image 
+                    src={'/logo.png'}
+                    height={80}
+                    width={180}
+                    alt="Logo"/>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
             Our mission is to help every creator find a space to make something
             worth sharing — and to help every studio owner fill their calendar.

@@ -8,6 +8,7 @@ import { Logo } from "@/components/site/logo";
 import { UserMenu } from "@/components/site/user-menu";
 import { useAuthUser } from "@/lib/auth-client";
 import { cn } from "cn";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { href: "/", label: "Home", icon: House },
@@ -40,7 +41,11 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-8">
-          <Logo />
+          <Image 
+          src={'/logo.png'}
+          height={50}
+          width={120}
+          alt="Logo"/>
 
           {/* Desktop links */}
           <nav className="hidden items-center gap-1 md:flex">

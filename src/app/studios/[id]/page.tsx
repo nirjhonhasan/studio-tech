@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Studio } from "@/types/studio";
 import { BookingButton } from "@/components/site/BookingBtn";
+import SubmitPopOver from "@/components/site/SubmitPopOver";
 
 
 interface StudioDetailsPageProps {
@@ -12,6 +13,7 @@ interface StudioDetailsPageProps {
 }
 
 async function getStudioDetails(id: string): Promise<Studio | null> {
+
   try {
     const res = await fetch(`http://localhost:5000/studios/${id}`,{
       headers: {authorization:'user logged in', }
@@ -26,7 +28,9 @@ async function getStudioDetails(id: string): Promise<Studio | null> {
   }
 }
 
+
 export default async function StudioDetailsPage({ params }: StudioDetailsPageProps) {
+  
   const { id } = await params;
   const studio = await getStudioDetails(id);
 
@@ -40,7 +44,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
     <div className="min-h-screen bg-[#121110] px-4 py-8 text-[#f3f0ea] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         
-        {/* ব্যাক নেভিগেশন */}
+   
         <div className="mb-6">
           <Link
             href="/studios"
@@ -50,7 +54,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
           </Link>
         </div>
 
-        {/* হেডার সেকশন */}
+
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <div className="mb-2 flex items-center gap-3">
@@ -68,7 +72,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
           </div>
         </div>
 
-        {/* ব্যানার ইমেজ */}
+
         <div className="relative mb-10 h-[350px] w-full overflow-hidden rounded-2xl border border-[#262422] sm:h-[480px]">
           <Image
             src={studio.imageUrl || "https://images.unsplash.com/photo-1540655037529-dec987208707?w=800"}
@@ -79,10 +83,10 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
           />
         </div>
 
-        {/* মেইন কন্টেন্ট ও সাইডবার */}
+
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
           
-          {/* বাম পাশ: বিস্তারিত */}
+
           <div className="space-y-8 lg:col-span-2">
             <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#262422] bg-[#1a1816] p-5">
               <div>
@@ -128,7 +132,8 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
             )}
           </div>
 
-          {/* ডান পাশ: সাইডবার বুকিং কার্ড */}
+
+
           <div className="lg:col-span-1">
             <div className="sticky top-8 rounded-2xl border border-[#262422] bg-[#1a1816] p-6 shadow-xl">
               <div className="mb-6 flex items-baseline justify-between border-b border-[#262422] pb-6">
@@ -148,12 +153,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
                 )}
               </div>
 
-              {/* ✅ আলাদা করা বুকিং বাটন কম্পোনেন্ট ব্যবহার করা হলো */}
-              <BookingButton
-                studioId={studioId}
-                studioTitle={studio.title}
-                hourlyRate={studio.hourlyRate}
-              />
+              <SubmitPopOver studio={studio} />
 
               <p className="mt-4 text-center text-xs text-[#a8a29e]">
                 You wont be charged yet. Instant confirmation upon host approval.
@@ -167,3 +167,4 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
     </div>
   );
 }
+
