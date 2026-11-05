@@ -52,7 +52,7 @@ export default function EditStudioForm({ studio, onClose }: EditStudioFormProps)
         maxCapacity: Number(formData.maxCapacity),
       };
 
-      const res = await fetch(`http://localhost:5000/studios/${studio._id}`, {
+      const res = await fetch(`NEXT_PUBLIC_API_URL/studios/${studio._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

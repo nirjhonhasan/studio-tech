@@ -22,7 +22,7 @@ async function getStudioDetails(id: string): Promise<Studio | null> {
   })
   const token = jwtToken?.token;
 
-  const res = await fetch(`http://localhost:5000/studios/${id}`, {
+  const res = await fetch(`NEXT_PUBLIC_API_URL/studios/${id}`, {
     headers: { authorization: `Bearer ${token}` }
   });
 

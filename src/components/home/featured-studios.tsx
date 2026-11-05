@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { Studio } from "@/types/studio";
 
 export default async function FeaturedStudio() {
-  const res = await fetch('http://localhost:5000/studios', { cache: 'no-store' });
+  const res = await fetch(`NEXT_PUBLIC_API_URL/studios`, { cache: 'no-store' });
   const data = await res.json();
 
 

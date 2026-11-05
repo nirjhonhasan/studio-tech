@@ -17,7 +17,7 @@ export function BookingList({ userEmail, initialBookings }: BookingListProps) {
   const handleCancelBooking = async (id: string) => {
     try {
       setLoadingId(id);
-      const res = await fetch(`http://localhost:5000/my-listings/${userEmail}`, {
+      const res = await fetch(`NEXT_PUBLIC_API_URL/my-listings/${userEmail}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Cancelled" }),

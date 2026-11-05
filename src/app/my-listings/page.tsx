@@ -16,7 +16,7 @@ const MyBookingsPage = () => {
     useEffect(() => {
         if (!user?.email) return;
 
-        fetch(`http://localhost:5000/my-listings/${user.email}`)
+        fetch(`NEXT_PUBLIC_API_URL/my-listings/${user.email}`)
             .then((res) => res.json())
             .then((data) => setBookings(Array.isArray(data) ? data : []))
             .catch((err) => console.error(err))

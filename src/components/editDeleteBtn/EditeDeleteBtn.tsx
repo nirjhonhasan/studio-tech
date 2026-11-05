@@ -23,7 +23,7 @@ const EditDeleteBtn = ({ studio }: EditDeleteBtnProps) => {
     if (!window.confirm("Are you sure you want to delete this studio?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/studios/${studioId}`, {
+      const res = await fetch(`NEXT_PUBLIC_API_URL/studios/${studioId}`, {
         method: "DELETE",
         headers: { 
           "Content-Type": "application/json"
