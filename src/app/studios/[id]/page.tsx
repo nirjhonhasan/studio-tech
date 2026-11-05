@@ -2,8 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Studio } from "@/types/studio";
-import { BookingButton } from "@/components/site/BookingBtn";
 import SubmitPopOver from "@/components/site/SubmitPopOver";
+import EditDeleteBtn from "@/components/editDeleteBtn/EditeDeleteBtn";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 
 interface StudioDetailsPageProps {
@@ -12,46 +14,53 @@ interface StudioDetailsPageProps {
   }>;
 }
 
+
 async function getStudioDetails(id: string): Promise<Studio | null> {
 
-  try {
-    const res = await fetch(`http://localhost:5000/studios/${id}`,{
-      headers: {authorization:'user logged in', }
-    });
+  const jwtToken = await auth.api.getToken({
+    headers: await headers()
+  })
+  const token = jwtToken?.token;
 
-    if (!res.ok) return null;
-    return await res.json();
-    
-  } catch (error) {
-    console.error("Failed to fetch studio details:", error);
-    return null;
-  }
+  const res = await fetch(`http://localhost:5000/studios/${id}`, {
+    headers: { authorization: `Bearer ${token}` }
+  });
+
+  if (!res.ok) return null;
+  return await res.json();
+
 }
 
 
+
 export default async function StudioDetailsPage({ params }: StudioDetailsPageProps) {
-  
+
   const { id } = await params;
   const studio = await getStudioDetails(id);
-
+  console.log(studio);
   if (!studio) {
     notFound();
   }
 
-  const studioId = studio._id || "";
-
   return (
     <div className="min-h-screen bg-[#121110] px-4 py-8 text-[#f3f0ea] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-        
-   
-        <div className="mb-6">
+
+
+        <div className="mb-6 flex justify-between items-center">
+
           <Link
             href="/studios"
             className="inline-flex items-center text-sm font-medium text-[#a8a29e] transition-colors hover:text-[#f59e0b]"
           >
             ← Back to Studios
           </Link>
+          <EditDeleteBtn
+            studio={{
+              ...studio,
+              _id: studio._id.toString() // ObjectId কে স্ট্রিং এ রূপান্তর করা বাধ্যতামূলক
+            }}
+          />
         </div>
 
 
@@ -85,7 +94,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
 
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-          
+
 
           <div className="space-y-8 lg:col-span-2">
             <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#262422] bg-[#1a1816] p-5">

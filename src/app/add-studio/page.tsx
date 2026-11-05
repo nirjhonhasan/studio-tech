@@ -5,8 +5,8 @@ export const metadata: Metadata = {
   title: "Add New Studio — StudioSpace",
 };
 
-// Add New Studio (private route) — the listing form that saves into the
-// MongoDB `studios` collection via POST /api/studios.
+
+
 export default function AddStudioPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">

@@ -4,19 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthUser } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-
-interface Booking {
-    _id: string;
-    studioName: string;
-    imageUrl?: string;
-    location?: string;
-    category?: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    hourlyRate: number;
-    status: string;
-}
+import type { Booking } from "@/types/booking";
 
 const MyBookingsPage = () => {
     const { user } = useAuthUser();

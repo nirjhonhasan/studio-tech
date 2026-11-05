@@ -5,16 +5,19 @@ import { client, db } from "./mongodb";
 
 export const auth = betterAuth({
 
+
   session: {
     cookieCache: {
-      enabled: true,       // ✅ এটি true করলে তবেই session_data কুকি তৈরি হবে
-      maxAge: 7 * 24 * 60 * 60, // ৭ দিন
-      strategy: "jwt",     // বা "compact" / "jwe"
+      enabled: true,       // 
+      maxAge: 7 * 24 * 60 * 60, 
+      strategy: "jwt",
     },
   },
   plugins: [
     jwt()
   ],
+  
+
 
   database: mongodbAdapter(db, {
     client,

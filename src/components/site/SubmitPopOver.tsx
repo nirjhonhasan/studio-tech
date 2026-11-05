@@ -11,7 +11,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "sonner";
-import { Calendar, Clock, DollarSign, Sparkles, User, Mail } from "lucide-react";
+import { DollarSign, Sparkles, User, Mail } from "lucide-react";
 import { useAuthUser } from "@/lib/auth-client";
 import { Studio } from "@/types/studio";
 
@@ -80,11 +80,14 @@ const SubmitPopOver = ({ studio }: SubmitPopOverProps) => {
     return (
         <div>
             <Popover>
-                <PopoverTrigger asChild>
-                    <Button className="w-full h-12 text-lg font-semibold bg-primary text-primary-foreground rounded-xl">
-                        <Sparkles className="size-5 mr-2" /> Book Studio Now
-                    </Button>
-                </PopoverTrigger>
+                {/* Base UI has no asChild — the button is passed with the render prop. */}
+                <PopoverTrigger
+                    render={
+                        <Button className="w-full h-12 text-lg font-semibold bg-primary text-primary-foreground rounded-xl">
+                            <Sparkles className="size-5 mr-2" /> Book Studio Now
+                        </Button>
+                    }
+                />
                 
                 <PopoverContent className="w-[380px] sm:w-[420px] p-6 rounded-2xl bg-background">
                     <form onSubmit={handleSubmit} className="space-y-4">

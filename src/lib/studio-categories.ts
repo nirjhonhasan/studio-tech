@@ -1,18 +1,5 @@
-import type { LucideIcon } from "lucide-react";
 import { Camera, Clapperboard, Mic, Music, Palette } from "lucide-react";
-import type { StudioCategory } from "@/types/studio";
-
-/**
- * The five studio categories with everything the UI needs:
- * display name, URL slug (used in /studios?category=...), cover image and icon.
- * Shared by the home page category grid and the explore page filter.
- */
-export interface CategoryMeta {
-  name: StudioCategory;
-  slug: string;
-  image: string;
-  icon: LucideIcon;
-}
+import type { StudioCategory, CategoryMeta } from "@/types/studio";
 
 export const STUDIO_CATEGORY_META: CategoryMeta[] = [
   { name: "Photo Studio", slug: "photo-studio", image: "/images/studio-cyc-wall.jpg", icon: Camera },

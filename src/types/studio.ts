@@ -1,6 +1,9 @@
 // Shared TypeScript types for StudioSpace.
-// The Studio type matches what our Express + MongoDB API will return,
-// so swapping sample data for real fetches later needs no component changes.
+// All domain types live here so both client components and server code
+// import from one place.
+
+import type { ObjectId } from "mongodb";
+import type { LucideIcon } from "lucide-react";
 
 export const STUDIO_CATEGORIES = [
   "Photo Studio",
@@ -12,6 +15,17 @@ export const STUDIO_CATEGORIES = [
 
 export type StudioCategory = (typeof STUDIO_CATEGORIES)[number];
 
+/**
+ * The five studio categories with everything the UI needs:
+ * display name, URL slug (used in /studios?category=...), cover image and icon.
+ * Shared by the home page category grid and the explore page filter.
+ */
+export interface CategoryMeta {
+  name: StudioCategory;
+  slug: string;
+  image: string;
+  icon: LucideIcon;
+}
 
 export interface Studio {
   _id: string;
@@ -32,6 +46,24 @@ export interface Studio {
   createdAt?: string;
 }
 
+/** Raw document shape in the `studios` MongoDB collection. */
+export interface StudioDoc {
+  _id: ObjectId;
+  title: string;
+  category: string;
+  imageUrl: string;
+  hourlyRate: number;
+  securityDeposit?: number;
+  maxCapacity: number;
+  amenities: string[];
+  overview?: string;
+  rating?: number;
+  location: string;
+  ownerName: string;
+  ownerEmail: string;
+  createdAt?: Date;
+}
+
 /**
  * Shape of the Add Studio form while being edited.
  * Numbers stay strings in state so empty inputs don't jump to 0;
@@ -47,4 +79,9 @@ export interface StudioFormData {
   imageUrl: string;
   amenities: string[];
   overview: string;
+}
+
+
+export interface Studio {
+  _id: string;
 }

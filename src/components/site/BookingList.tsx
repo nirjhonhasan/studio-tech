@@ -2,28 +2,22 @@
 
 import { useState } from "react";
 import { CalendarCheck, MapPin, XCircle, Clock } from "lucide-react";
-
-interface Booking {
-  _id: string;
-  studioName: string;
-  location: string;
-  date: string;
-  price: number;
-  status: "Pending" | "Confirmed" | "Completed" | "Cancelled";
-}
+import type { Booking } from "@/types/booking";
 
 interface BookingListProps {
+  /** Email of the logged-in user — borrowed by the cancel request URL. */
+  userEmail: string;
   initialBookings: Booking[];
 }
 
-export function BookingList({ initialBookings }: BookingListProps) {
+export function BookingList({ userEmail, initialBookings }: BookingListProps) {
   const [bookings, setBookings] = useState<Booking[]>(initialBookings);
   const [loadingId, setLoadingId] = useState<string | null>(null);
 
   const handleCancelBooking = async (id: string) => {
     try {
       setLoadingId(id);
-      const res = await fetch(`http://localhost:5000/my-listings/${user.email}`, {
+      const res = await fetch(`http://localhost:5000/my-listings/${userEmail}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "Cancelled" }),
@@ -31,7 +25,7 @@ export function BookingList({ initialBookings }: BookingListProps) {
 
       if (res.ok) {
         setBookings((prev) =>
-          prev.map((b) => (b._id === id ? { ...b, status: "Cancelled" as const } : b))
+          prev.map((b) => (b._id === id ? { ...b, status: "Cancelled" } : b))
         );
       }
     } catch (error) {
@@ -82,7 +76,7 @@ export function BookingList({ initialBookings }: BookingListProps) {
               <CalendarCheck className="size-4" /> {booking.date}
             </p>
             <p className="text-sm font-semibold mb-4">
-              Price: <span className="text-primary">${booking.price}/hr</span>
+              Price: <span className="text-primary">${booking.hourlyRate}/hr</span>
             </p>
           </div>
 

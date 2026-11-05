@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, LogIn, UserPlus, House, Clapperboard, BookOpen, Users, LayoutDashboard, CirclePlus, Library, CalendarCheck } from "lucide-react";
-import { Logo } from "@/components/site/logo";
 import { UserMenu } from "@/components/site/user-menu";
 import { useAuthUser } from "@/lib/auth-client";
 import { cn } from "cn";
@@ -17,35 +16,31 @@ const NAV_LINKS = [
   { href: "/#about-us", label: "About Us", icon: Users },
 ] as const;
 
-/**
- * Sticky site header with active-route indicators.
- * Shows Login / Register when signed out, and the avatar dropdown when signed in.
- */
+
+
 export function Navbar() {
   const pathname = usePathname(); // current route, used for the active indicator
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Session comes from BetterAuth (src/lib/auth-client.ts).
   const { user, isPending } = useAuthUser();
   const isLoggedIn = Boolean(user);
 
-  // Account links reused by the mobile menu panel.
+
   const ACCOUNT_LINKS = [
     { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/add-studio", label: "Add New Studio", icon: CirclePlus },
     { href: "/my-listings", label: "My Studio Listings", icon: Library },
-    { href: "/my-bookings", label: "My Bookings", icon: CalendarCheck },
   ];
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-8">
-          <Image 
-          src={'/logo.png'}
-          height={50}
-          width={120}
-          alt="Logo"/>
+          <Image
+            src={'/logo.png'}
+            height={50}
+            width={120}
+            alt="Logo" />
 
           {/* Desktop links */}
           <nav className="hidden items-center gap-1 md:flex">
@@ -53,7 +48,7 @@ export function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                // Active route indicator: amber pill behind the current page's link
+
                 className={cn(
                   "rounded-full px-3.5 py-1.5 text-sm transition-colors hover:bg-muted hover:text-foreground",
                   isActive(pathname, link.href)
@@ -67,9 +62,10 @@ export function Navbar() {
           </nav>
         </div>
 
-        {/* Right side — changes based on auth state */}
+
+
         {isPending ? (
-          // Placeholder avatar while the session loads (prevents flash of Login buttons)
+
           <span className="size-9 animate-pulse rounded-full bg-muted" aria-hidden="true" />
         ) : isLoggedIn ? (
           <UserMenu />
@@ -101,7 +97,7 @@ export function Navbar() {
         </button>
       </div>
 
-      {/* Mobile dropdown panel */}
+
       {mobileOpen && (
         <div className="border-t border-border bg-background px-4 pb-4 pt-2 md:hidden">
           <nav className="flex flex-col gap-1">

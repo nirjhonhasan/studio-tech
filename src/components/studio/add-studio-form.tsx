@@ -9,7 +9,8 @@ export function AddStudioForm() {
   const router = useRouter();
   const { user, isPending } = useAuthUser();
 
-  // 1. Loading state for user session
+
+  
   if (isPending) {
     return (
       <div className="flex min-h-40 items-center justify-center gap-3 text-muted-foreground">
