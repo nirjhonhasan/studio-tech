@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Aperture } from "lucide-react";
 
-// Custom 404 — "creative studio illustration" via the aperture icon art,
-// with the required direct "Return to Home" button.
+
 export default function NotFound() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-4 text-center">

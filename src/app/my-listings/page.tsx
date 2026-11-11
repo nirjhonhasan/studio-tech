@@ -1,30 +1,46 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuthUser } from "@/lib/auth-client";
+import { useAuthUser, authClient } from "@/lib/auth-client"; // authClient ইম্পোর্ট করা হলো
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import type { Booking } from "@/types/booking";
+import { ClientTokenForServer } from "@/lib/ClientTokenForServer";
 
 const MyBookingsPage = () => {
     const { user } = useAuthUser();
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // console.log(user);
-    
     useEffect(() => {
         if (!user?.email) return;
 
-        fetch(`NEXT_PUBLIC_API_URL/my-listings/${user.email}`)
-            .then((res) => res.json())
-            .then((data) => setBookings(Array.isArray(data) ? data : []))
-            .catch((err) => console.error(err))
-            .finally(() => setLoading(false));
+        const fetchBookings = async () => {
+            try {
+                // authClient থেকে টোকেন নেওয়া হচ্ছে
+                const token = await ClientTokenForServer();
+
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-listings/${user.email}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        authorization: `Bearer ${token}`, // Authorization হেডার যুক্ত করা হলো
+                    },
+                });
+
+                const data = await res.json();
+                setBookings(Array.isArray(data) ? data : []);
+            } catch (err) {
+                console.error("Fetch bookings error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBookings();
     }, [user]);
 
-
-    //loading er somoy jeta suspance asbe.
+    // loading er somoy jeta suspance asbe.
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-[60vh]">
@@ -32,7 +48,6 @@ const MyBookingsPage = () => {
             </div>
         );
     }
-
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-10">

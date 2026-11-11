@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Studio } from "@/types/studio";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
+import { ClientTokenForServer } from "@/lib/ClientTokenForServer";
 
 interface EditStudioFormProps {
   studio: Studio;
@@ -36,7 +38,9 @@ export default function EditStudioForm({ studio, onClose }: EditStudioFormProps)
     );
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -52,26 +56,33 @@ export default function EditStudioForm({ studio, onClose }: EditStudioFormProps)
         maxCapacity: Number(formData.maxCapacity),
       };
 
-      const res = await fetch(`NEXT_PUBLIC_API_URL/studios/${studio._id}`, {
+      // TypeScript error এড়াতে নিরাপদভাবে authClient থেকে getToken কল করা হচ্ছে
+      const client = authClient as unknown as {
+        getToken: () => Promise<{ data?: { token?: string }; token?: string } | null>;
+      };
+      
+      const token = await ClientTokenForServer();
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios/${studio._id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updatedPayload),
       });
 
-      const data = await res.json();
-
       if (res.ok) {
-        toast("Studio updated successfully!");
+        toast.success("Studio updated successfully!");
         if (onClose) onClose();
         router.refresh();
       } else {
-        toast("Failed to update studio.");
+        const errorData = await res.json().catch(() => null);
+        toast.error(errorData?.message || "Failed to update studio.");
       }
     } catch (error) {
       console.error("Update error:", error);
-      toast("Something went wrong!");
+      toast.error("Something went wrong!");
     } finally {
       setLoading(false);
     }
@@ -222,7 +233,7 @@ export default function EditStudioForm({ studio, onClose }: EditStudioFormProps)
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3.5 px-4 bg-[#f59e0b] hover:bg-[#d97706] text-black font-bold rounded-xl transition-all cursor-pointer mt-6 shadow-lg"
+          className="w-full py-3.5 px-4 bg-[#f59e0b] hover:bg-[#d97706] text-black font-bold rounded-xl transition-all cursor-pointer mt-6 shadow-lg disabled:opacity-50"
         >
           {loading ? "Updating Studio..." : "Update Studio"}
         </button>

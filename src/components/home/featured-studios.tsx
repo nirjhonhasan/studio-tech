@@ -4,14 +4,31 @@ import { ArrowRight } from "lucide-react";
 import { Studio } from "@/types/studio";
 
 export default async function FeaturedStudio() {
-  const res = await fetch(`NEXT_PUBLIC_API_URL/studios`, { cache: 'no-store' });
-  const data = await res.json();
+  let studios: Studio[] = [];
 
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    if (apiUrl) {
+      const res = await fetch(`${apiUrl}/studios`, {
+        cache: 'no-store'
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          studios = data;
+        }
+      } else {
+        console.error("FeaturedStudio API failed with status:", res.status);
+      }
+    }
+  } catch (error) {
+    console.error("FeaturedStudio fetch error:", error);
+  }
 
   return (
     <section className="w-full bg-[#121110] px-4 py-16 text-[#f3f0ea]">
       <div className="mx-auto max-w-7xl">
-        
         
         <div className="mb-12 text-center">
           <span className="text-xs font-semibold uppercase tracking-widest text-[#f59e0b]">
@@ -25,16 +42,20 @@ export default async function FeaturedStudio() {
           </p>
         </div>
 
-        
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {data.slice(0, 6).map((studio: Studio, i: number) => (
-            <div key={studio._id || i}>
-              <StudioCard studio={studio} />
-            </div>
-          ))}
-        </div>
+        {studios.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {studios.slice(0, 6).map((studio: Studio, i: number) => (
+              <div key={studio._id || i}>
+                <StudioCard studio={studio} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 text-[#a8a29e]">
+            No studios available at the moment.
+          </div>
+        )}
 
-        
         <div className="mt-12 text-center">
           <Link
             href="/studios"

@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import EditStudioForm from "./EditeFile"; // তোমার ফাইলের নাম EditeFile হলে এটি ঠিক রেখো
+import EditStudioForm from "./EditeFile";
 import { Studio } from "@/types/studio";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { ClientTokenForServer } from "@/lib/ClientTokenForServer";
 
 interface EditDeleteBtnProps {
   studio: Studio;
@@ -12,7 +15,6 @@ const EditDeleteBtn = ({ studio }: EditDeleteBtnProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = async () => {
-    // ObjectId বা অবজেক্ট হলে সেটিকে স্ট্রিংয়ে রূপান্তর করা
     const studioId = studio._id;
 
     if (!studioId) {
@@ -23,41 +25,42 @@ const EditDeleteBtn = ({ studio }: EditDeleteBtnProps) => {
     if (!window.confirm("Are you sure you want to delete this studio?")) return;
 
     try {
-      const res = await fetch(`NEXT_PUBLIC_API_URL/studios/${studioId}`, {
+      // টোকেন ফেচ করার সঠিক পদ্ধতি
+      const token = await ClientTokenForServer();
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios/${studioId}`, {
         method: "DELETE",
-        headers: { 
-          "Content-Type": "application/json"
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`
         },
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        alert("Studio deleted successfully!");
+        toast("Studio deleted successfully!");
         window.location.href = "/studios";
       } else {
-        alert("Failed to delete studio.");
+        toast(data.msg || "Failed to delete studio.");
       }
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Something went wrong!");
+      toast("Something went wrong!");
     }
   };
-
-
-
 
   return (
     <>
       <div className="flex justify-between items-center gap-5">
-        <button 
-          onClick={() => setIsOpen(true)} 
+        <button
+          onClick={() => setIsOpen(true)}
           className="py-2.5 px-4 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-semibold border border-amber-500/30 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           ✏️ Edit
         </button>
-        <button 
-          onClick={handleDelete} 
+        <button
+          onClick={handleDelete}
           className="py-2.5 px-4 bg-red-600/10 hover:bg-red-600/20 text-red-400 font-semibold border border-red-500/30 rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           🗑️ Delete

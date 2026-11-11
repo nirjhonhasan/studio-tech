@@ -6,7 +6,7 @@ import SubmitPopOver from "@/components/site/SubmitPopOver";
 import EditDeleteBtn from "@/components/editDeleteBtn/EditeDeleteBtn";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-
+import { TokenForServer } from "@/lib/TokenForServer";
 
 interface StudioDetailsPageProps {
   params: Promise<{
@@ -14,30 +14,30 @@ interface StudioDetailsPageProps {
   }>;
 }
 
-
 async function getStudioDetails(id: string): Promise<Studio | null> {
+  try {
+    const token = await TokenForServer()
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios/${id}`, {
+      headers: { authorization: `Bearer ${token}` },
+      cache: "no-store"
+    });
 
-  const jwtToken = await auth.api.getToken({
-    headers: await headers()
-  })
-  const token = jwtToken?.token;
-
-  const res = await fetch(`NEXT_PUBLIC_API_URL/studios/${id}`, {
-    headers: { authorization: `Bearer ${token}` }
-  });
-
-  if (!res.ok) return null;
-  return await res.json();
-
+    if (!res.ok) {
+      console.error(`Failed to fetch studio details for ID: ${id}, Status: ${res.status}`);
+      return null;
+    }
+    
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching studio details:", error);
+    return null;
+  }
 }
 
-
-
 export default async function StudioDetailsPage({ params }: StudioDetailsPageProps) {
-
   const { id } = await params;
   const studio = await getStudioDetails(id);
-  console.log(studio);
+
   if (!studio) {
     notFound();
   }
@@ -45,10 +45,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
   return (
     <div className="min-h-screen bg-[#121110] px-4 py-8 text-[#f3f0ea] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-
-
         <div className="mb-6 flex justify-between items-center">
-
           <Link
             href="/studios"
             className="inline-flex items-center text-sm font-medium text-[#a8a29e] transition-colors hover:text-[#f59e0b]"
@@ -58,11 +55,10 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
           <EditDeleteBtn
             studio={{
               ...studio,
-              _id: studio._id.toString() // ObjectId কে স্ট্রিং এ রূপান্তর করা বাধ্যতামূলক
+              _id: studio._id.toString()
             }}
           />
         </div>
-
 
         <div className="mb-6 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
@@ -81,7 +77,6 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
           </div>
         </div>
 
-
         <div className="relative mb-10 h-[350px] w-full overflow-hidden rounded-2xl border border-[#262422] sm:h-[480px]">
           <Image
             src={studio.imageUrl || "https://images.unsplash.com/photo-1540655037529-dec987208707?w=800"}
@@ -92,10 +87,7 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
           />
         </div>
 
-
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-
-
           <div className="space-y-8 lg:col-span-2">
             <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[#262422] bg-[#1a1816] p-5">
               <div>
@@ -141,8 +133,6 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
             )}
           </div>
 
-
-
           <div className="lg:col-span-1">
             <div className="sticky top-8 rounded-2xl border border-[#262422] bg-[#1a1816] p-6 shadow-xl">
               <div className="mb-6 flex items-baseline justify-between border-b border-[#262422] pb-6">
@@ -169,11 +159,8 @@ export default async function StudioDetailsPage({ params }: StudioDetailsPagePro
               </p>
             </div>
           </div>
-
         </div>
-
       </div>
     </div>
   );
 }
-

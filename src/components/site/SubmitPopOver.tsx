@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // App Router-এর সঠিক হুক
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,12 +22,10 @@ interface SubmitPopOverProps {
 const SubmitPopOver = ({ studio }: SubmitPopOverProps) => {
     const { user } = useAuthUser();
     const [loading, setLoading] = useState(false);
-    const router = useRouter(); // হুক কল করা হলো
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        console.log("Studio Prop Data:", studio);
 
         const formElement = e.currentTarget;
         const formData = new FormData(formElement);
@@ -49,23 +47,29 @@ const SubmitPopOver = ({ studio }: SubmitPopOverProps) => {
 
         try {
             setLoading(true);
-            const res = await fetch(`NEXT_PUBLIC_API_URL/my-set-studios`, {
+
+            // ব্রাউজার থেকে লোকালস্টোরেজ বা কুকি থেকে টোকেন সংগ্রহ করা
+            const token = typeof window !== 'undefined' ? localStorage.getItem("token") : "";
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/my-set-studios`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    // ব্যাকএন্ডের verifyToken মিডলওয়্যারের জন্য টোকেন পাস করা হলো
+                    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+                },
                 body: JSON.stringify(payload),
             });
 
             const result = await res.json();
 
             if (!res.ok) {
-                toast.error(result.message || "Booking Failed!");
+                toast.error(result.msg || result.message || "Booking Failed!");
                 return;
             }
 
             toast.success("Booking submitted successfully!");
             formElement.reset();
-            
-           
             router.refresh();
             router.push('/my-listings');
 
@@ -80,7 +84,6 @@ const SubmitPopOver = ({ studio }: SubmitPopOverProps) => {
     return (
         <div>
             <Popover>
-                {/* Base UI has no asChild — the button is passed with the render prop. */}
                 <PopoverTrigger
                     render={
                         <Button className="w-full h-12 text-lg font-semibold bg-primary text-primary-foreground rounded-xl">

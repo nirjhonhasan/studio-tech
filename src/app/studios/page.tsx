@@ -16,11 +16,11 @@ const AllStudiosPage = () => {
     async function fetchData() {
       try {
 
-        const studioRes = await fetch(`NEXT_PUBLIC_API_URL/studios`);
+        const studioRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/studios`);
         const studioData = await studioRes.json();
         setStudios(studioData);
 
-        const catRes = await fetch(`NEXT_PUBLIC_API_URL/categories`);
+        const catRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
         const catData = await catRes.json();
         setCategories(catData);
 
